@@ -27,9 +27,13 @@ class DbConnection {
 		if (create) {
 			const initScriptPath = DbConnection.getInitPath()
 			const queries = readFileSync(initScriptPath, { encoding: 'utf8' })
-			for (let query of queries.split(';')) {
-				db.run(query)
-			}
+               db.serialize(
+                    () => {
+                         for (let query of queries.split(';')) {
+                              db.exec(query)
+                         }
+                    }
+               )
 		}
 		db.close(err => {
 			if (err) console.log(err.message)
