@@ -1,5 +1,5 @@
 CREATE TABLE boky (
-     id_boky INTEGER AUTO INCREMENT PRIMARY KEY,
+     id_boky INTEGER NOT NULL PRIMARY KEY,
      anarana TEXT NOT NULL
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE boky (
 -- )*/
 
 CREATE TABLE toko_sy_andininy (
-     id_toko_sy_andininy INTEGER AUTO INCREMENT  PRIMARY KEY,
+     id_toko_sy_andininy INTEGER NOT NULL  PRIMARY KEY,
      boky INTEGER NOT NULL,
      toko INTEGER NOT NULL,
      andininy INTEGER NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE toko_sy_andininy (
 );
 
 CREATE TABLE fanampiny (
-     id_fanampiny INTEGER AUTO INCREMENT  PRIMARY KEY,
+     id_fanampiny INTEGER NOT NULL PRIMARY KEY,
      toko_sy_andininy INTEGER NOT NULL,
      marika TEXT,   -- null == soramandry
      soratra TEXT NOT NULL,

@@ -40,6 +40,21 @@ class DbConnection {
 		})
 	}
 
+     run(query, ...values) {
+          let connection = this.openConnection()
+          connection.serialize(() => {
+               const stt = connection.prepare(query)
+               if (query.includes('?')) {
+                    for (let value of values) {
+                         stt.run(value)
+                    }
+               }
+               else {
+                    stt.run()
+               }
+          })
+     }
+
      openConnection() {
           if (!this.#connection)
                this.#connection = new sqlite3.Database(DbConnection.getDbPath())
