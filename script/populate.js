@@ -19,6 +19,12 @@ function insertFanampiny(toko, and, datas, con) {
 				const mark = regexp.exec(key)[1] == 'titre'? null: regexp.exec(key)[1]
 				stt.run(id_t_a, mark, datas[key])
 			}
+			try {
+				con.run('COMMIT TRANSACTION')
+			}
+			catch {
+
+			}
 		})
 	}
 }
@@ -200,7 +206,7 @@ async function populate() {
 
 	await browser.close()
 
-	con.run('COMMIT TRANSACTION')
+	//con.run('COMMIT TRANSACTION')
 	con.close()
 }
 

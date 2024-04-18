@@ -1,4 +1,4 @@
-import sqlite3, { Database } from 'sqlite3'
+import Database from 'better-sqlite3'
 import path from 'path'
 import { existsSync, readFileSync, mkdirSync } from 'fs'
 
@@ -23,50 +23,58 @@ class DbConnection {
 		if (!existsSync(dbPath)) {
 			create = true
 		}
-		const db = new sqlite3.Database(dbPath)
+		const db = new Database(dbPath)
 		if (create) {
 			const initScriptPath = DbConnection.getInitPath()
 			const queries = readFileSync(initScriptPath, { encoding: 'utf8' })
-               db.serialize(
-                    () => {
-                         for (let query of queries.split(';')) {
-                              db.exec(query)
-                         }
-                    }
-               )
+               const createTransaction = db.transaction((lines) => {
+                    for (const line of lines) db.prepare(line).run()
+               })
+               createTransaction(...queries)
 		}
 		db.close(err => {
 			if (err) console.log(err.message)
 		})
 	}
 
-     run(query, ...values) {
+     #doQuery(query, ops, ret = true, ...values) {
           let connection = this.openConnection()
-          connection.serialize(() => {
-               const stt = connection.prepare(query)
-               if (query.includes('?')) {
-                    for (let value of values) {
-                         stt.run(value)
-                    }
-               }
-               else {
-                    stt.run()
-               }
-          })
+          let ret = null
+          if (values.length > 0) {
+               ret = connection.prepare(query)[ops]?.(...values)
+          }
+          else {
+               ret = connection.prepare(query)[ops]()
+          }
+          this.closeConnection()
+          if (ret)
+               return true
+     }
+
+     run(query, ...values) {
+          this.#doQuery(query, 'run', false, ...values)
+     }
+
+     get(query, ...values) {
+          return this.#doQuery(query, 'get', true, ...values)
+     }
+
+     all(query, ...values) {
+          return this.#doQuery(query, 'all', true, ...values)
      }
 
      openConnection() {
           if (!this.#connection)
-               this.#connection = new sqlite3.Database(DbConnection.getDbPath())
+               this.#connection = new Database(DbConnection.getDbPath())
           return this.#connection
      }
      startTransaction() {
           this.#connection = this.openConnection()
-          this.#connection.run('BEGIN')
+          this.#connection.run('BEGIN TRANSACTION')
      }
      commitTransaction() {
           this.#connection = this.openConnection()
-          this.#connection.run('COMMIT')
+          this.#connection.run('COMMIT TRANSACTION')
      }
      closeConnection() {
           if (this.#connection) {

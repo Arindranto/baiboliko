@@ -3,9 +3,12 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "start": "next start",
+    "get": "node ./script/populate-better.js"
   },
   "dependencies": {
+    "better-sqlite3": "^9.5.0",
+    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "next": "latest",
     "puppeteer": "^22.6.2",
