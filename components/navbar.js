@@ -1,6 +1,9 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+
 export default function NavBar() {
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-light w-100" style={{zIndex: 1}}>
+		<nav className="navbar navbar-expand-lg navbar-light fixed-top bg-light w-100">
 			<div className="container-fluid mx-lg-5 mx-sm-3 my-sm-0 my-lg-2">
 				<a className="navbar-brand fw-bold" href="#">
 					Baiboliko
@@ -82,18 +85,20 @@ export default function NavBar() {
 						</li>
 					</ul>
 					<form className="d-flex">
-						<input
-							className="form-control me-2"
-							type="search"
-							placeholder="Hitady..."
-							aria-label="Search"
-						/>
-						<button
-							className="btn btn-outline-success"
-							type="submit"
-						>
-							Hitady
-						</button>
+						<div className="input-group">
+							<input
+								className="form-control"
+								type="search"
+								placeholder="Hitady..."
+								aria-label="Search"
+							/>
+							<button
+								className="btn btn-outline-success input-group-text"
+								type="submit"
+							>
+								<FontAwesomeIcon icon={faMagnifyingGlass} />
+							</button>
+						</div>
 					</form>
 				</div>
 			</div>

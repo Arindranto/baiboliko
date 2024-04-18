@@ -1,4 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css' // Bootstrap
+// Font awesome
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 import Head from 'next/head'
 import Layout from '../components/layout'
 import { useEffect } from 'react'

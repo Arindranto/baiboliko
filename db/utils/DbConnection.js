@@ -37,30 +37,38 @@ class DbConnection {
 		})
 	}
 
-     #doQuery(query, ops, ret = true, ...values) {
+     #doQuery(query, ops, ret = true, pluck = false, ...values) {
           let connection = this.openConnection()
-          let ret = null
+          let val = null
+          const stt = connection.prepare(query)
+          if (pluck) {
+               stt.pluck()
+          }
           if (values.length > 0) {
-               ret = connection.prepare(query)[ops]?.(...values)
+               val = stt[ops]?.(...values)
           }
           else {
-               ret = connection.prepare(query)[ops]()
+               val = stt[ops]?.()
           }
           this.closeConnection()
           if (ret)
-               return true
+               return val
      }
 
      run(query, ...values) {
-          this.#doQuery(query, 'run', false, ...values)
+          this.#doQuery(query, 'run', false, false, ...values)
      }
 
      get(query, ...values) {
-          return this.#doQuery(query, 'get', true, ...values)
+          return this.#doQuery(query, 'get', true, false, ...values)
      }
 
      all(query, ...values) {
-          return this.#doQuery(query, 'all', true, ...values)
+          return this.#doQuery(query, 'all', true, false, ...values)
+     }
+
+     allPluck(query, ...values) {
+          return this.#doQuery(query, 'all', true, true, ...values)
      }
 
      openConnection() {
