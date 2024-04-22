@@ -2,23 +2,48 @@ import Head from 'next/head'
 import NavToko from '../components/nav-toko'
 import { getBoky } from '../services/bible.services'
 import styles from '../styles/Home.module.css'
+import { post } from '../services/fetch.service'
+import { useRef, useState } from 'react'
+import Modal from '../components/modal'
+import { COMPILER_NAMES } from 'next/dist/shared/lib/constants'
+import { initCap } from '../utils/string.utils'
 
 export default function Home(props) {
 	let { boky } = props
+	const [book, setBook] = useState(0)	// Id book
+	const [nbrToko, setNbrToko] = useState(0)	// Id book
+	const openModalBtn = useRef()
 	const taloha = boky.filter(b => b.id_boky <= 39)
 	const vaovao = boky.filter(b => b.id_boky > 39)
 
+	const resetBook = () => {
+		setBook(0)
+	}
+
+	const getBookName = () => {
+		if (book) {
+			if (book <= 39) {
+				// Vaovao
+				return initCap(taloha.find(b => b.id_boky == book).anarana)
+			}
+			else if (book <= 66) {
+				return initCap(vaovao.find(b => b.id_boky == book).anarana)
+			}
+		}
+		return '[NO_BOOK_SELECTED]'
+	}
+
+	const getColorClass = () => {
+		return book > 39? "success": "primary"
+	}
+
 	const showModal = async id => {
-		const data = await fetch('/api/get_toko', {
-			method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-			body: JSON.stringify({
+		const data = await post('/api/get_toko', {
 				id_boky: id,
-			}),
-		}).then(d => d.json())
-		console.log(data)
+			});
+		setBook(id)
+		setNbrToko(data.length)
+		openModalBtn.current.click()
 	}
 
 	return (
@@ -61,7 +86,21 @@ export default function Home(props) {
 						></NavToko>
 					</div>
 				</div>
+				<button ref={openModalBtn} type="button" className="visually-hidden" data-bs-toggle="modal" data-bs-target="#toko_modal">
+					{/* To open the modal */}
+				</button>
 			</div>
+			
+			<Modal dialogClass="modal-fullscreen-lg-down modal-lg" centered={false} titleClass={`text-${getColorClass()}`} id_modal="toko_modal" title={getBookName()} backdrop={false} buttons={[]}>
+				<div className="row gy-3">
+					{ Array.from({length: nbrToko}).map((_, idx) => (
+						<div key={idx} className="col-2 col-lg-2 d-flex justify-content-center">
+							<button className={`d-none d-lg-block btn px-3 fs-4 fw-bold btn-outline-${getColorClass()}`} style={{ width: '90px' }}>{idx + 1}</button>
+							<button className={`d-block d-lg-none btn px-3 fw-bold btn-outline-${getColorClass()}`} style={{ minWidth: '70px' }}>{idx + 1}</button>
+						</div>
+					)) }
+				</div>
+			</Modal>
 		</>
 	)
 }
