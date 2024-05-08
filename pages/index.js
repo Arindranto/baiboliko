@@ -52,15 +52,14 @@ export default function Home(props) {
 				<title>Tenin'Andriamanitra</title>
 			</Head>
 			<div
-				className="d-flex justify-content-center"
-				style={{ paddingTop: '10vh', paddingBottom: '3vh' }}
+				className="d-flex align-items-start align-items-lg-center justify-content-center position-absolute h-100"
 			>
-				<div className="row w-100 w-lg-75 gx-5 fw-bold">
+				<div className="row w-100 gx-5 fw-bold">
 					<div id="taloha" className="col">
 						<p className="d-none d-lg-block text-primary mb-3 h2">
 							Testamenta Taloha
 						</p>
-						<p className="d-block d-lg-none text-primary mb-3">
+						<p className="d-block d-lg-none text-primary mb-4 h4 text-center">
 							Testamenta Taloha
 						</p>
 						<NavToko
@@ -75,7 +74,7 @@ export default function Home(props) {
 						<p className="d-none d-lg-block text-success mb-3 h2">
 							Testamenta Vaovao
 						</p>
-						<p className="d-block d-lg-none text-success mb-3">
+						<p className="d-block d-lg-none text-success mb-4 h4 text-center">
 							Testamenta Vaovao
 						</p>
 						<NavToko
