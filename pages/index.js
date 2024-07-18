@@ -7,11 +7,13 @@ import { useRef, useState } from 'react'
 import Modal from '../components/modal'
 import { COMPILER_NAMES } from 'next/dist/shared/lib/constants'
 import { initCap } from '../utils/string.utils'
+import TokoModal from '../components/toko-modal'
 
 export default function Home(props) {
 	let { boky } = props
 	const [book, setBook] = useState(0)	// Id book
-	const [nbrToko, setNbrToko] = useState(0)	// Id book
+	const [nbrToko, setNbrToko] = useState(0)	// Number of verses
+	const [selectedToko, setSelectedToko] = useState(0) 	// Toko selected
 	const openModalBtn = useRef()
 	const taloha = boky.filter(b => b.id_boky <= 39)
 	const vaovao = boky.filter(b => b.id_boky > 39)
@@ -20,13 +22,16 @@ export default function Home(props) {
 		setBook(0)
 	}
 
-	const getBookName = () => {
-		if (book) {
-			if (book <= 39) {
-				// Vaovao
+	const getBookName = (id = null) => {
+		if (!id) {
+			id = book
+		}
+		if (id) {
+			if (id <= 39) {
+				// Taloha
 				return initCap(taloha.find(b => b.id_boky == book).anarana)
 			}
-			else if (book <= 66) {
+			else if (id <= 66) {
 				return initCap(vaovao.find(b => b.id_boky == book).anarana)
 			}
 		}
@@ -38,12 +43,17 @@ export default function Home(props) {
 	}
 
 	const showModal = async id => {
+		setSelectedToko(0)
 		const data = await post('/api/get_toko', {
 				id_boky: id,
 			});
 		setBook(id)
 		setNbrToko(data.length)
 		openModalBtn.current.click()
+	}
+
+	const selectBook = (num) => {
+		setModalTitle(prev => `${prev}, ${num}`)
 	}
 
 	return (
@@ -89,17 +99,7 @@ export default function Home(props) {
 					{/* To open the modal */}
 				</button>
 			</div>
-			
-			<Modal dialogClass="modal-fullscreen-lg-down modal-lg" centered={false} titleClass={`text-${getColorClass()}`} id_modal="toko_modal" title={getBookName()} backdrop={false} buttons={[]}>
-				<div className="row gy-3">
-					{ Array.from({length: nbrToko}).map((_, idx) => (
-						<div key={idx} className="col-2 col-lg-2 d-flex justify-content-center">
-							<button className={`d-none d-lg-block btn px-3 fs-4 fw-bold btn-outline-${getColorClass()}`} style={{ width: '90px' }}>{idx + 1}</button>
-							<button className={`d-block d-lg-none btn px-3 fw-bold btn-outline-${getColorClass()}`} style={{ minWidth: '70px' }}>{idx + 1}</button>
-						</div>
-					)) }
-				</div>
-			</Modal>
+			<TokoModal colorClass={getColorClass()} nbrToko={nbrToko} boky={getBookName()} selectedToko={selectedToko} onTokoSelected={(toko) => { setSelectedToko(toko) }}></TokoModal>
 		</>
 	)
 }

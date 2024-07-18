@@ -8,6 +8,7 @@ export default function Modal({
 	buttons = [],
      centered = true,
 	footer = null,
+	onClose = () => {}
 }) {
 	return (
 		<div
@@ -32,6 +33,7 @@ export default function Modal({
 							className="btn-close"
 							data-bs-dismiss="modal"
 							aria-label="Close"
+							onClick={onClose}
 						></button>
 					</div>
 					<div className="modal-body">{children}</div>
