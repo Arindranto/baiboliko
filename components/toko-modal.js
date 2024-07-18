@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Modal from "./modal"
 import styles from './toko-modal.module.css'
 
@@ -11,13 +11,21 @@ export default function TokoModal({ boky, colorClass, nbrToko, selectedToko, onT
      }
      const selectStep = (step) => {
           const circles = document.querySelectorAll(`.${styles.circle}`)
-          console.log(circles.length, currentActive)
           setCurrentActive((prev) => {
+               console.log(colorClass)
                circles.forEach((circle, idx) => {
+                    circle.classList.remove("border-primary")
+                    circle.classList.remove("border-success")
+                    circle.classList.remove("text-primary")
+                    circle.classList.remove("text-success")
                     if (idx + 1 <= step) {
-                      circle.classList.add(`${styles.active}`);
+                      //circle.classList.add(`${styles.active}`)
+                      circle.classList.add(`border-${colorClass}`)
+                      circle.classList.add(`text-${colorClass}`)
                     } else {
-                      circle.classList.remove(`${styles.active}`);
+                      //circle.classList.remove(`${styles.active}`)
+                      circle.classList.remove(`border-${colorClass}`)
+                      circle.classList.remove(`text-${colorClass}`)
                     }
                   });
                
@@ -30,19 +38,20 @@ export default function TokoModal({ boky, colorClass, nbrToko, selectedToko, onT
                return step
           })
      }
-     return (
-          <Modal onClose={ () => {
-               selectStep(1)
-               console.log('Closing...')     
-          } } dialogClass="modal-fullscreen-lg-down modal-lg" centered={false} titleClass={`text-${colorClass}`} id_modal="toko_modal" title={`${boky}${selectedToko > 0? ", " + selectedToko: ""}`} backdrop={false} buttons={[]}>
-               <div className="d-flex flex-column align-items-center justify-content-center text-center">
-                    <div className={styles["progress-container"]}>
-                         <div className={styles.progress} ref={progressRef}></div>
-                         <div className={`${styles.circle} ${styles.active}`}>Toko</div>
-                         <div className={styles.circle}>Andininy faha</div>
-                         <div className={styles.circle}>Ka hatrmin'ny</div>
-                    </div>
 
+     useEffect(() => {
+          console.log('boky changed')
+          selectStep(1)
+     }, [boky, colorClass])
+     return (
+          <Modal dialogClass="modal-fullscreen-lg-down modal-lg" centered={false} titleClass={`text-${colorClass}`} id_modal="toko_modal" title={`${boky}${selectedToko > 0? ", " + selectedToko: ""}`} backdrop={false} buttons={[]}>
+               <div className="pb-4 px-2 px-lg-5">
+                    <div className={`d-flex ${styles["progress-container"]} position-relative justify-content-between w-100`}>
+                         <div className={`${styles.progress} bg-${colorClass}`} ref={progressRef}></div>
+                         <div className={`${styles.circle} fw-bold`}>Toko</div>
+                         <div className={`${styles.circle} fw-bold`}>Andininy faha</div>
+                         <div className={`${styles.circle} fw-bold`}>Ka hatramin'ny</div>
+                    </div>
                </div>
                <div className="row gy-3">
                     { Array.from({length: nbrToko}).map((_, idx) => (
