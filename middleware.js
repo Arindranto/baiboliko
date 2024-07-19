@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
-  /*return Response.json({message: 'from middleware'}, {
+  /*return NextResponse.json({message: 'from middleware'}, {
     status: 200
   })*/
   // return NextResponse.redirect(new URL('/home', request.url))

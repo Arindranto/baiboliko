@@ -1,13 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import Link from 'next/link'
 
 export default function NavBar() {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light fixed-top bg-light w-100">
 			<div className="container-fluid mx-lg-5 mx-sm-3 my-sm-0 my-lg-2">
-				<a className="navbar-brand fw-bold" href="#">
+				<Link className="navbar-brand fw-bold" href="/">
 					Baiboliko
-				</a>
+				</Link>
 				<button
 					className="navbar-toggler"
 					type="button"
@@ -25,13 +26,13 @@ export default function NavBar() {
 				>
 					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
 						<li className="nav-item">
-							<a
+							<Link
 								className="nav-link active"
 								aria-current="page"
-								href="#"
+								href="/"
 							>
 								Home
-							</a>
+							</Link>
 						</li>
 						<li className="nav-item">
 							<a className="nav-link" href="#">

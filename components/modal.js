@@ -39,11 +39,13 @@ export default function Modal({
 					<div className="modal-body">{children}</div>
 					{buttons.length > 0 && (
 						<div className="modal-footer">
-							{buttons.map(btn => (
+							{buttons.map((btn, key) => (
 								<button
+									key={key}
 									type="button"
 									className={`btn ${btn.className}`}
 									data-bs-dismiss="modal"
+									onClick={btn.onClick}
 								>
 									{btn.libelle}
 								</button>

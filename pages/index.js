@@ -8,6 +8,8 @@ import Modal from '../components/modal'
 import { COMPILER_NAMES } from 'next/dist/shared/lib/constants'
 import { initCap } from '../utils/string.utils'
 import TokoModal from '../components/toko-modal'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function Home(props) {
 	let { boky } = props
@@ -17,6 +19,7 @@ export default function Home(props) {
 	const openModalBtn = useRef()
 	const taloha = boky.filter(b => b.id_boky <= 39)
 	const vaovao = boky.filter(b => b.id_boky > 39)
+	const router = useRouter()
 
 	const resetBook = () => {
 		setBook(0)
@@ -43,12 +46,7 @@ export default function Home(props) {
 	}
 
 	const showModal = async id => {
-		setSelectedToko(0)
-		const data = await post('/api/get_toko', {
-				id_boky: id,
-			});
 		setBook(id)
-		setNbrToko(data.length)
 		openModalBtn.current.click()
 	}
 
@@ -99,7 +97,17 @@ export default function Home(props) {
 					{/* To open the modal */}
 				</button>
 			</div>
-			<TokoModal colorClass={getColorClass()} nbrToko={nbrToko} boky={getBookName()} selectedToko={selectedToko} onTokoSelected={(toko) => { setSelectedToko(toko) }}></TokoModal>
+			<TokoModal handleHamaky={(baiboly) => {
+				router.push({
+					pathname: `/${book}`,
+					query: {
+						toko: baiboly.toko,
+						start: baiboly.start,
+						end: baiboly.end,
+						boky: baiboly.boky
+					}
+				})
+			} } colorClass={getColorClass()} idBoky={book} boky={getBookName()}></TokoModal>
 		</>
 	)
 }
