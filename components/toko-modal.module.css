@@ -45,8 +45,6 @@
 	/* height: 30px; */
 	justify-content: center;
 	transition: 0.4 ease;
-  	padding: 5px;
-	width: 10rem;
   	z-index: var(--circle-zIndex);
 }
 

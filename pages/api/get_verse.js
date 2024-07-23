@@ -9,7 +9,6 @@ export default function handler(req, res) {
                return res.status(400).json({ message: "No toko proposed" })
           }
           const { id_boky, toko, start = 0 } = req.body
-          console.log(id_boky, toko, start)
           const query = 'SELECT DISTINCT andininy FROM toko_sy_andininy WHERE boky = ? AND toko = ? AND andininy >= ? ORDER BY andininy ASC'
           const con = new DbConnection()
           const andininy = con.allPluck(query, id_boky, toko, start)

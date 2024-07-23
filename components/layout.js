@@ -5,7 +5,7 @@ export default function Layout({ children }) {
      return (
           <>
                <NavBar />
-               <main className="position-relative" style={{ height: '85vh', marginTop: '75px' }}>{ children }</main>
+               <main className="position-relative" style={{ height: '100vh', paddingTop: '4.5rem', paddingBottom: '20px', overflow: "hidden" }}>{ children }</main>
                <Footer />
           </>
      )

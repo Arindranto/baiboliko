@@ -1,24 +1,32 @@
 import { useRouter } from "next/router"
 import DbConnection from "../db/utils/DbConnection"
+import Head from "next/head"
 
 export default function Boky({ soratra, colorClass, body }) {
      const text = soratra.map((s) => <span key={s.andininy}>
           <span className="fw-bold">{' '}{s.andininy}.{' '}</span>
           <span>{s.soratra}</span>
      </span>)
-     console.log(body)
      const getTitle = (body) => {
           if (body) {
                return `${body.boky}${body.toko > 0? " " + body.toko: ""}${body.start > 0? ", " + body.start: ""}${body.end > 0? " - " + body.end:""}`
           }
           return ''
      }
-     return (<div className="d-flex flex-column align-items-center justify-content-center">
-          <h1 className={`mt-3 fs-2 fw-bold text-center py-2 px-5 rounded-5 border border-5 border-${colorClass} text-${colorClass}`}>{getTitle(body)}</h1>
-          <div className="container-fluid px-5 py-3 text-justify" style={{ "text-align": "justify !important" }}>
-               {text}
-          </div>
-     </div>)
+     return (
+          <>
+               <Head>
+                    <title>Baiboliko - {getTitle(body)}</title>     
+               </Head>     
+               <div className="d-flex flex-column align-items-center justify-content-center pb-5">
+                    <h1 className={`d-none d-lg-block mt-3 fs-2 fw-bold text-center py-2 px-5 rounded-5 border border-5 border-${colorClass} text-${colorClass}`}>{getTitle(body)}</h1>
+                    <h1 className={`d-block d-lg-none mt-3 fs-4 fw-bold text-center py-1 px-4 rounded-5 border border-3 border-${colorClass} text-${colorClass}`}>{getTitle(body)}</h1>
+                    <div className="container-fluid px-5 py-3 text-justify" style={{ "text-align": "justify" }}>
+                         {text}
+                    </div>
+               </div>
+          </>
+     )
 }
 
 /*export async function getStaticPaths() {
