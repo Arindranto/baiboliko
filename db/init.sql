@@ -3,10 +3,11 @@ CREATE TABLE boky (
      anarana TEXT NOT NULL
 );
 CREATE TABLE toko_sy_andininy (
-     id_toko_sy_andininy INTEGER NOT NULL  PRIMARY KEY,
+     id_toko_sy_andininy INTEGER NOT NULL PRIMARY KEY,
      boky INTEGER NOT NULL,
      toko INTEGER NOT NULL,
      andininy INTEGER NOT NULL,
+     filaharana INTEGER NOT NULL DEFAULT 1,
      soratra TEXT NOT NULL,
      CONSTRAINT fk_boky_toko_sy_andininy FOREIGN KEY(boky)
      REFERENCES boky(id_boky)

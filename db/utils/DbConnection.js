@@ -27,11 +27,16 @@ class DbConnection {
 		if (create) {
 			const initScriptPath = DbConnection.getInitPath()
 			const queries = readFileSync(initScriptPath, { encoding: 'utf8' })
-               const createTransaction = db.transaction((lines) => {
+               // console.log(queries)
+               /*const createTransaction = db.transaction((lines) => {
                     for (const line of lines) db.prepare(line).run()
                })
-               createTransaction(...queries)
-		}
+               createTransaction(...queries)*/
+               for (let query of queries.split(';')) {
+                    console.log('Running: ' + query)
+                    db.prepare(query).run()
+               }
+          }
 		db.close(err => {
 			if (err) console.log(err.message)
 		})

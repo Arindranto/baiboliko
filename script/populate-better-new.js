@@ -140,6 +140,11 @@ async function populate() {
 		process.exit()
 	}
 	book = book.toLowerCase()*/
+	
+	const insertBook = `INSERT INTO boky(anarana) VALUES (?) RETURNING id_boky`
+	const insertToko = `INSERT INTO toko_sy_andininy(boky, toko, andininy, filaharana, soratra) VALUES(?, ?, ?, ?, ?) RETURNING id_toko_sy_andininy`
+	const insertFanampiny = `INSERT INTO fanampiny(toko_sy_andininy, marika, soratra) VALUES(?, ?, ?)`
+
 	const classNames = {
 		header: '.ChapterContent_heading__xBDcs',
 		verset: '.ChapterContent_verse__57FIw',
@@ -149,7 +154,7 @@ async function populate() {
 
 	const dbPath = path.join(process.cwd(), 'db', 'baiboliko.db')
 	console.log('Opening the database at ' + dbPath)
-	//const con = new Database(dbPath)
+	const con = new Database(dbPath)
 	// return
 	console.log('Opening the page')
 	const browser = await puppeteer.launch()
@@ -166,9 +171,33 @@ async function populate() {
 	// await page.waitForSelector(searchResultSelector);
 	// await page.click(searchResultSelector);
 	//console.log(classNames)
+	let bookNames = {}
 
+	con.prepare('BEGIN TRANSACTION').run()
+
+	let chapter = await page.waitForSelector('.ChapterContent_reader__Dt27r h1')
+	let book = (await chapter.evaluate(el => el.textContent)).split(' ')
+	chapter = book.pop()
+	book = book.join(' ')
+	if (!bookNames[book]) {
+		bookNames[book] = con.prepare(insertBook).pluck().get(book.toLowerCase())
+	}
 	let text = await getText(page)
-	console.log(text)
+	for (const {soratra, andininy, fanampiny, soramandry} of text) {
+		let id_principale
+		for (let i = 0; i < soratra.length; i++){
+			const id_toko_sy_andininy = con.prepare(insertToko).pluck().get(bookNames[book], chapter, andininy, i+1, soratra[i])
+			if (i == 0) {
+				id_principale = id_toko_sy_andininy
+			}
+			if (fanampiny[i]) {
+				con.prepare(insertFanampiny).run(id_toko_sy_andininy, '', fanampiny[i])
+			}
+		}
+		if (soramandry) {
+			con.prepare(insertFanampiny).run(id_principale, 'soramandry', soramandry)
+		}
+	}
 	let limit = 1, maxLimit = 2
 	let nextPage
 	do {
@@ -182,32 +211,80 @@ async function populate() {
 		if (nextPage) {
 			console.log(nextPage);
 			await page.goto(nextPage)
+			let chapter = await page.waitForSelector('.ChapterContent_reader__Dt27r h1')
+			let book = (await chapter.evaluate(el => el.textContent)).split(' ')
+			chapter = book.pop()
+			book = book.join(' ')
+			if (!bookNames[book]) {
+				bookNames[book] = con.prepare(insertBook).pluck().get(book.toLowerCase())
+			}
 			let text = await getText(page)
-			console.log(text)
+			for (const {soratra, andininy, fanampiny, soramandry} of text) {
+				let id_principale
+				for (let i = 0; i < soratra.length; i++){
+					const id_toko_sy_andininy = con.prepare(insertToko).pluck().get(bookNames[book], chapter, andininy, i+1, soratra[i])
+					if (i == 0) {
+						id_principale = id_toko_sy_andininy
+					}
+					if (fanampiny[i]) {
+						con.prepare(insertFanampiny).run(id_toko_sy_andininy, '', fanampiny[i])
+					}
+				}
+				if (soramandry) {
+					con.prepare(insertFanampiny).run(id_principale, 'soramandry', soramandry)
+				}
+			}
 		}
 		limit++
 	} while (nextPage && limit < maxLimit)
-
+	con.prepare('COMMIT TRANSACTION').run()
 	await browser.close()
 }
 
 async function getText(page) {
-	text = await page.$$eval('.ChapterContent_verse__57FIw', async el => {
+	let soramandry = await page.$$eval('.ChapterContent_s2__l6Ny0', el => {
+		return el.map(s => {
+			return {
+				[s.nextSibling.querySelector('.ChapterContent_label__R2PLt').textContent]: s.querySelector('.ChapterContent_heading__xBDcs')?.textContent
+			}
+		})
+	})
+	let tmp = {}
+	soramandry.forEach(s => {
+		for (const key in s) {
+			tmp[key] = s[key]
+		}
+	})
+	soramandry = tmp
+	let text = await page.$$eval('.ChapterContent_verse__57FIw', el => {
 		return el.map(v => {
-			const notes = v.querySelectorAll('.ChapterContent_body__O3qjr span')
-			let fanampiny = ""
-			for (let f of notes) {
-				fanampiny += f.textContent + " "
+			let tmp = v.querySelectorAll('.ChapterContent_body__O3qjr')
+			let fanampiny = []
+			for (let f of tmp) {
+				let spans = f.querySelectorAll('span')
+				let t = ""
+				for (let span of spans) {
+					t += span.textContent.trim() + ' '
+				}
+				fanampiny.push(t.trim())
+			}
+			tmp = v.querySelectorAll('.ChapterContent_content__RrUqA')
+			let soratra = []
+			for (let s of tmp) {
+				soratra.push(s.textContent)
 			}
 			return {
-				fanampiny: fanampiny?.trim(), 
+				fanampiny: fanampiny.filter(f => f),
 				andininy: v.querySelector('.ChapterContent_label__R2PLt')?.textContent,
-				soratra: v.querySelector('.ChapterContent_content__RrUqA')?.textContent
+				soratra: soratra.filter(s => s)
 			}
 		}).filter(v => v.andininy && v.soratra)
 	})
-	return text
-} 
+	return text.map(t => ({
+		...t,
+		soramandry: soramandry[t.andininy] || null,
+	}))
+}
 
 
 
