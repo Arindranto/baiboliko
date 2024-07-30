@@ -5,7 +5,7 @@ import { existsSync, readFileSync, mkdirSync } from 'fs'
 class DbConnection {
 	#connection
      static getDirName() {
-          return path.join(process.cwd(), 'db')
+          return './db'
      }
      static getInitPath() {
           return path.join(DbConnection.getDirName(), 'init.sql')
