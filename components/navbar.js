@@ -5,12 +5,14 @@ import Link from 'next/link'
 export default function NavBar() {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light fixed-top bg-light w-100">
-			<div className="container-fluid mx-lg-5 mx-sm-3 my-sm-0 my-lg-2">
-				<Link className="navbar-brand fw-bold" href="/">
-					Baiboliko
+			<div className="container-fluid mx-lg-5 mx-sm-3">
+				<Link className="navbar-brand" href="/">
+					<h1 className="fs-2 p-0 m-0 fw-bold">
+						Baiboliko
+					</h1>
 				</Link>
 				<button
-					className="navbar-toggler"
+					className="navbar-toggler d-none"
 					type="button"
 					data-bs-toggle="collapse"
 					data-bs-target="#navbarSupportedContent"
@@ -24,7 +26,7 @@ export default function NavBar() {
 					className="collapse navbar-collapse"
 					id="navbarSupportedContent"
 				>
-					<ul className="navbar-nav me-auto mb-2 mb-lg-0">
+					<ul className="navbar-nav me-auto mb-2 mb-lg-0 d-none">
 						<li className="nav-item">
 							<Link
 								className="nav-link active"
@@ -85,7 +87,7 @@ export default function NavBar() {
 							</a>
 						</li>
 					</ul>
-					<form className="d-flex">
+					<form className="d-flex d-none">
 						<div className="input-group">
 							<input
 								className="form-control"
