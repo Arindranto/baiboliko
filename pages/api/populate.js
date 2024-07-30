@@ -1,6 +1,4 @@
-import { clearPreviewData } from 'next/dist/server/api-utils'
 import puppeteer from 'puppeteer'
-import { insertBook } from '../../db/utils/DbPopulate'
 
 export default async function handler(req, res) {
 	// Launch the browser and open a new blank page
