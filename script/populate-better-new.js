@@ -198,7 +198,7 @@ async function populate() {
 			con.prepare(insertFanampiny).run(id_principale, 'soramandry', soramandry)
 		}
 	}
-	let limit = 1, maxLimit = 2
+	let limit = 1, maxLimit = Infinity
 	let nextPage
 	do {
 		nextPage = await page.waitForSelector('div.\\[pointer-events\\:all\\] + div.\\[pointer-events\\:all\\]')	// Next button
@@ -242,14 +242,17 @@ async function populate() {
 }
 
 async function getText(page) {
+	console.log(page.url())
+	console.log('Getting soramandry')
 	let soramandry = await page.$$eval('.ChapterContent_s2__l6Ny0', el => {
 		return el.map(s => {
 			return {
-				[s.nextSibling.querySelector('.ChapterContent_label__R2PLt').textContent]: s.querySelector('.ChapterContent_heading__xBDcs')?.textContent
+				[s.nextSibling.querySelector('.ChapterContent_label__R2PLt')?.textContent]: s.querySelector('.ChapterContent_heading__xBDcs')?.textContent
 			}
 		})
 	})
 	let tmp = {}
+	console.log('setting the soramandry')
 	soramandry.forEach(s => {
 		for (const key in s) {
 			tmp[key] = s[key]
@@ -280,6 +283,7 @@ async function getText(page) {
 			}
 		}).filter(v => v.andininy && v.soratra)
 	})
+	console.log('Finished')
 	return text.map(t => ({
 		...t,
 		soramandry: soramandry[t.andininy] || null,
