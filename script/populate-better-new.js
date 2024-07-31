@@ -278,13 +278,23 @@ async function getText(page) {
 			}
 			return {
 				fanampiny: fanampiny.filter(f => f),
-				andininy: v.querySelector('.ChapterContent_label__R2PLt')?.textContent,
+				andininy: +v.getAttribute('data-usfm')?.split('.').pop(),
 				soratra: soratra.filter(s => s)
 			}
 		}).filter(v => v.andininy && v.soratra)
 	})
-	console.log('Finished')
-	return text.map(t => ({
+	let text_tmp = new Array()
+	for (let t of text) {
+		let idx = text_tmp.findIndex(d => d.andininy == t.andininy)
+		if (idx >= 0) {
+			text_tmp[idx].fanampiny = [...text_tmp[idx].fanampiny, ...t.fanampiny]
+			text_tmp[idx].soratra = [...text_tmp[idx].soratra, ...t.soratra]
+		}
+		else {
+			text_tmp.push(JSON.parse(JSON.stringify(t)))
+		}
+	}
+	return text_tmp.map(t => ({
 		...t,
 		soramandry: soramandry[t.andininy] || null,
 	}))
